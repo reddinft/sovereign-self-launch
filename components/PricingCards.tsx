@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Gift } from 'lucide-react';
 import posthog from 'posthog-js';
 
 type Variant = 'variant-a' | 'variant-b' | 'variant-c';
@@ -14,7 +16,7 @@ const PLANS = [
     id: 'c',
     variantKey: 'variant-c',
     name: 'Founder',
-    badge: '⭐ RECOMMENDED',
+    badge: 'Most popular',
     price: '$29.95',
     period: '/month',
     gift: '+ 1 year free',
@@ -55,10 +57,8 @@ export function PricingCards({ initialVariant }: PricingCardsProps) {
   const [email, setEmail] = useState('');
   const [loadingVariant, setLoadingVariant] = useState<string | null>(null);
   const [error, setError] = useState('');
-  const [highlighted, setHighlighted] = useState<Variant>(initialVariant);
 
   useEffect(() => {
-    // Track which variant was shown
     posthog.capture('pricing_variant_seen', { variant: initialVariant });
   }, [initialVariant]);
 
@@ -94,9 +94,12 @@ export function PricingCards({ initialVariant }: PricingCardsProps) {
 
   return (
     <div className="w-full max-w-5xl mx-auto">
-      {/* Email input for checkout */}
+      {/* Email input */}
       <div className="mb-8 max-w-md mx-auto">
-        <label className="block text-sm text-zinc-400 mb-2">
+        <label
+          className="block text-sm mb-2"
+          style={{ color: 'hsl(220 10% 55%)' }}
+        >
           Your email (needed for your download link)
         </label>
         <input
@@ -104,63 +107,126 @@ export function PricingCards({ initialVariant }: PricingCardsProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="your@email.com"
-          className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-sm"
+          className="w-full px-4 py-3 rounded-[0.625rem] text-sm"
+          style={{
+            background: 'hsl(220 15% 95% / 0.05)',
+            border: '1px solid hsl(220 15% 95% / 0.1)',
+            color: 'hsl(220 15% 95%)',
+          }}
         />
       </div>
 
       {error && (
-        <p className="text-center text-sm text-red-400 mb-6">{error}</p>
+        <p
+          className="text-center text-sm mb-6"
+          style={{ color: 'hsl(0 72% 65%)' }}
+        >
+          {error}
+        </p>
       )}
 
-      {/* Pricing cards — C first (anchor), then B, then A */}
+      {/* Cards — C first (anchor), then B, then A */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {PLANS.map((plan) => (
-          <div
+        {PLANS.map((plan, i) => (
+          <motion.div
             key={plan.id}
-            className={`glass-card rounded-2xl p-6 flex flex-col relative transition-all duration-300 ${
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.1 }}
+            className={`glass-card rounded-[0.625rem] p-6 flex flex-col relative ${
               plan.highlight ? 'glow-purple' : ''
             }`}
           >
             {plan.badge && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="bg-[#7c3aed] text-white text-xs font-bold px-3 py-1 rounded-full">
+                <span
+                  className="px-3 py-1 rounded-full text-xs font-semibold"
+                  style={{
+                    background: 'hsl(262 80% 65%)',
+                    color: 'hsl(0 0% 100%)',
+                  }}
+                >
                   {plan.badge}
                 </span>
               </div>
             )}
 
             <div className="mb-4">
-              <p className="text-sm font-medium text-zinc-400 mb-1">{plan.name}</p>
+              <p
+                className="text-sm font-medium mb-1"
+                style={{ color: 'hsl(220 10% 55%)' }}
+              >
+                {plan.name}
+              </p>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-white">{plan.price}</span>
-                <span className="text-zinc-400 text-sm">{plan.period}</span>
+                <span
+                  className="font-display text-4xl"
+                  style={{ color: 'hsl(220 15% 95%)' }}
+                >
+                  {plan.price}
+                </span>
+                <span
+                  className="text-sm"
+                  style={{ color: 'hsl(220 10% 55%)' }}
+                >
+                  {plan.period}
+                </span>
               </div>
-              <div className="mt-2">
-                <span className="inline-block bg-[#7c3aed]/20 text-[#a78bfa] text-sm font-semibold px-3 py-1 rounded-full border border-[#7c3aed]/30">
+              <div className="mt-2 inline-flex items-center gap-1.5">
+                <Gift
+                  className="w-4 h-4"
+                  style={{ color: 'hsl(262 80% 75%)' }}
+                />
+                <span
+                  className="text-sm font-semibold"
+                  style={{ color: 'hsl(262 80% 75%)' }}
+                >
                   {plan.gift}
                 </span>
               </div>
             </div>
 
-            <p className="text-sm text-zinc-400 mb-2">{plan.tagline}</p>
-            <p className="text-xs text-zinc-500 mb-6">{plan.months}</p>
+            <p
+              className="text-sm mb-1"
+              style={{ color: 'hsl(220 10% 55%)' }}
+            >
+              {plan.tagline}
+            </p>
+            <p
+              className="text-xs mb-6"
+              style={{ color: 'hsl(220 10% 40%)' }}
+            >
+              {plan.months}
+            </p>
 
             <button
               onClick={() => handleCheckout(plan.id, plan.variantKey as Variant)}
               disabled={loadingVariant !== null}
-              className={`mt-auto w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-200 disabled:opacity-50 ${
+              className="mt-auto w-full py-3 px-4 rounded-[0.625rem] text-sm font-semibold transition-all disabled:opacity-50"
+              style={
                 plan.highlight
-                  ? 'bg-[#7c3aed] hover:bg-[#6d28d9] text-white'
-                  : 'bg-white/5 hover:bg-white/10 text-white border border-white/10'
-              }`}
+                  ? {
+                      background: 'hsl(262 80% 65%)',
+                      color: 'hsl(0 0% 100%)',
+                    }
+                  : {
+                      background: 'hsl(220 15% 95% / 0.05)',
+                      border: '1px solid hsl(220 15% 95% / 0.1)',
+                      color: 'hsl(220 15% 95%)',
+                    }
+              }
             >
               {loadingVariant === plan.id ? 'Redirecting...' : plan.cta}
             </button>
-          </div>
+          </motion.div>
         ))}
       </div>
 
-      <p className="text-center text-sm text-zinc-500 mt-8">
+      <p
+        className="text-center text-sm mt-8"
+        style={{ color: 'hsl(220 10% 45%)' }}
+      >
         Not the right fit? Every founding membership is fully refundable — no questions, no hoops — if we don&apos;t launch within 30 days of your payment.
       </p>
     </div>

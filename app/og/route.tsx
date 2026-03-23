@@ -7,7 +7,7 @@ export async function GET() {
     (
       <div
         style={{
-          background: '#0a0a0a',
+          background: '#080b14',
           width: '1200px',
           height: '630px',
           display: 'flex',
@@ -17,11 +17,11 @@ export async function GET() {
           fontFamily: 'sans-serif',
         }}
       >
-        <div style={{ color: '#7c3aed', fontSize: '24px', marginBottom: '20px' }}>⬡ SOVEREIGN SELF</div>
-        <div style={{ color: '#f5f5f5', fontSize: '56px', fontWeight: 'bold', textAlign: 'center', maxWidth: '900px', lineHeight: 1.2 }}>
+        <div style={{ color: '#a78bfa', fontSize: '24px', marginBottom: '20px', letterSpacing: '2px' }}>⬡ ReddiOS</div>
+        <div style={{ color: '#f0f0f5', fontSize: '56px', fontWeight: 'bold', textAlign: 'center', maxWidth: '900px', lineHeight: 1.2 }}>
           Your private AI chief of staff.
         </div>
-        <div style={{ color: '#888', fontSize: '24px', marginTop: '24px', textAlign: 'center' }}>
+        <div style={{ color: '#666', fontSize: '24px', marginTop: '24px', textAlign: 'center' }}>
           Zuckerberg&apos;s building one for himself. Yours stays private.
         </div>
       </div>

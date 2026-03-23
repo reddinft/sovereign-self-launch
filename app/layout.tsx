@@ -1,37 +1,30 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import { PostHogProvider } from '@/components/PostHogProvider';
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL('https://sovereign-self-launch.vercel.app'),
-  title: 'Sovereign Self — Your private AI chief of staff',
-  description: "Zuckerberg's building one for himself. Yours stays private. Join the founding cohort.",
+  title: 'ReddiOS — Your private AI chief of staff',
+  description: "Zuckerberg's building one for himself. ReddiOS stays private. Join the founding cohort.",
   openGraph: {
-    title: 'Sovereign Self — Your private AI chief of staff',
-    description: "Zuckerberg's building one for himself. Yours stays private.",
+    title: 'ReddiOS — Your private AI chief of staff',
+    description: "Zuckerberg's building one for himself. ReddiOS stays private.",
     url: 'https://sovereign-self-launch.vercel.app',
-    siteName: 'Sovereign Self',
+    siteName: 'ReddiOS',
     images: [
       {
         url: '/og',
         width: 1200,
         height: 630,
-        alt: 'Sovereign Self — Your private AI chief of staff',
+        alt: 'ReddiOS — Your private AI chief of staff',
       },
     ],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sovereign Self — Your private AI chief of staff',
-    description: "Zuckerberg's building one for himself. Yours stays private.",
+    title: 'ReddiOS — Your private AI chief of staff',
+    description: "Zuckerberg's building one for himself. ReddiOS stays private.",
     images: ['/og'],
   },
 };
@@ -42,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className="dark">
       <body>
         <PostHogProvider>
           {children}
