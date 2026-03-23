@@ -9,7 +9,7 @@ const steps = [
   },
   {
     title: 'Download and install.',
-    description: 'When we launch, you get a private link. Five-minute setup on your Mac. No accounts. No cloud sync.',
+    description: 'When we launch, you get a private link. Five-minute setup on Mac, Windows, or Linux. No accounts. No cloud. Mobile is on the roadmap — local when it can be, verifiably private when it can\'t.',
   },
   {
     title: 'Your AI starts learning you.',

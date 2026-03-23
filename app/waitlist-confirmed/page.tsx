@@ -41,7 +41,7 @@ export default function WaitlistConfirmedPage() {
             </li>
             <li className="flex gap-2">
               <span style={{ color: 'hsl(262 80% 75%)' }}>→</span>
-              Five-minute install on your Mac
+              Five-minute install on Mac, Windows, or Linux
             </li>
             <li className="flex gap-2">
               <span style={{ color: 'hsl(262 80% 75%)' }}>→</span>
