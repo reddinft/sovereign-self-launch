@@ -1,6 +1,22 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { PostHogProvider } from '@/components/PostHogProvider';
+import { DM_Sans, Instrument_Serif } from 'next/font/google';
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+});
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  variable: '--font-instrument-serif',
+  weight: '400',
+  style: ['normal', 'italic'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://sovereign-self-launch.vercel.app'),
@@ -36,7 +52,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body>
+      <body className={`${dmSans.variable} ${instrumentSerif.variable} font-sans`}>
         <PostHogProvider>
           {children}
         </PostHogProvider>
