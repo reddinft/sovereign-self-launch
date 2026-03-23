@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { Resend } from 'resend';
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,6 +24,21 @@ export async function POST(req: NextRequest) {
     // Get current waitlist count
     const countResult = await db.execute('SELECT COUNT(*) as count FROM waitlist');
     const count = Number(countResult.rows[0].count);
+
+    // Send confirmation email via Resend — silently skip if key not configured
+    if (process.env.RESEND_API_KEY) {
+      try {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        await resend.emails.send({
+          from: 'Sovereign Self <hello@sovereignself.ai>',
+          to: normalizedEmail,
+          subject: "You're on the list — Sovereign Self",
+          html: `<p>You're in. We'll reach out when founding spots open.</p><p>— The Sovereign Self team</p>`,
+        });
+      } catch (emailError) {
+        console.error('Resend email error (non-fatal):', emailError);
+      }
+    }
 
     return NextResponse.json({ success: true, count });
   } catch (error) {

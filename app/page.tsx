@@ -1,8 +1,7 @@
 import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';
-import { getPricingVariant, getPostHogServer } from '@/lib/posthog';
+import { getPostHogServer } from '@/lib/posthog';
 import { WaitlistForm } from '@/components/WaitlistForm';
-import { PricingCards } from '@/components/PricingCards';
 import { FaqAccordion } from '@/components/FaqAccordion';
 
 export const dynamic = 'force-dynamic';
@@ -15,7 +14,6 @@ async function getDistinctId(): Promise<string> {
 
 export default async function HomePage() {
   const distinctId = await getDistinctId();
-  const pricingVariant = await getPricingVariant(distinctId);
 
   // Track server-side
   try {
@@ -131,21 +129,24 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── PRICING ─── */}
+      {/* ─── PRICING COMING SOON ─── */}
       <section id="pricing" className="px-6 py-24">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-4">
-            Founder Pricing
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-xs text-zinc-400 mb-8">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#7c3aed] animate-pulse" />
+            Founding pricing — coming soon
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            Founder pricing opening soon.
           </h2>
-          <p className="text-center text-zinc-400 mb-4 max-w-2xl mx-auto">
-            We&apos;re opening a small founding cohort — the people who shape what this becomes.
-            Lock in your rate now. Fully refundable if we don&apos;t launch within 30 days.
+          <p className="text-zinc-400 mb-8 leading-relaxed">
+            We&apos;re reserving founding spots for early believers.
+            Join the waitlist to be first in line — and to lock in the lowest rate we&apos;ll ever offer.
           </p>
-          <p className="text-center text-zinc-500 text-sm mb-12">
-            Same product, same privacy, same features. The difference is how many free months you lock in.
-          </p>
-
-          <PricingCards initialVariant={pricingVariant} />
+          <WaitlistForm
+            buttonText="Get first access →"
+            source="pricing"
+          />
         </div>
       </section>
 
@@ -162,7 +163,7 @@ export default async function HomePage() {
               {
                 step: '01',
                 title: 'Claim your spot.',
-                body: "Pick your tier, drop your email, and you're in the founding cohort.",
+                body: "Join the waitlist and you're in the founding cohort. Pricing drops when we open the doors.",
               },
               {
                 step: '02',
@@ -225,7 +226,7 @@ export default async function HomePage() {
             © {new Date().getFullYear()} Redditech Pty Ltd · Sydney, Australia
           </p>
           <div className="flex gap-6">
-            <a href="#pricing" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Pricing</a>
+            <a href="#pricing" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Early Access</a>
             <a href="mailto:nissan@reddi.tech" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Contact</a>
           </div>
         </div>

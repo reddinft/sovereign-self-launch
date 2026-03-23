@@ -10,12 +10,29 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Sovereign Self — Your Private AI Chief of Staff',
-  description: "Zuckerberg's building one for himself. We built one for you. Runs locally on your machine. Your data never leaves. No cloud. No ads. No exceptions.",
+  metadataBase: new URL('https://sovereign-self-launch.vercel.app'),
+  title: 'Sovereign Self — Your private AI chief of staff',
+  description: "Zuckerberg's building one for himself. Yours stays private. Join the founding cohort.",
   openGraph: {
-    title: 'Sovereign Self — Your Private AI Chief of Staff',
-    description: 'Your AI chief of staff. Runs locally. Works privately.',
+    title: 'Sovereign Self — Your private AI chief of staff',
+    description: "Zuckerberg's building one for himself. Yours stays private.",
+    url: 'https://sovereign-self-launch.vercel.app',
+    siteName: 'Sovereign Self',
+    images: [
+      {
+        url: '/og',
+        width: 1200,
+        height: 630,
+        alt: 'Sovereign Self — Your private AI chief of staff',
+      },
+    ],
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sovereign Self — Your private AI chief of staff',
+    description: "Zuckerberg's building one for himself. Yours stays private.",
+    images: ['/og'],
   },
 };
 

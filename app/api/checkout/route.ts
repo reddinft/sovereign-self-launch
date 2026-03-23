@@ -3,6 +3,13 @@ import { getStripe, VARIANT_PRICE_IDS, VARIANT_AMOUNTS_CENTS } from '@/lib/strip
 import { getDb } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
+  if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === 'sk_test_placeholder') {
+    return NextResponse.json(
+      { error: 'Early access payments opening soon. Join the waitlist to be notified.' },
+      { status: 503 }
+    );
+  }
+
   try {
     const body = await req.json();
     const { variant, email } = body;
