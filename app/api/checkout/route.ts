@@ -22,6 +22,13 @@ export async function POST(req: NextRequest) {
     }
 
     const priceId = VARIANT_PRICE_IDS[variant];
+    if (!priceId || priceId.startsWith('price_placeholder')) {
+      return NextResponse.json(
+        { error: 'Early access payments opening soon. Join the waitlist to be notified.' },
+        { status: 503 }
+      );
+    }
+
     const amountCents = VARIANT_AMOUNTS_CENTS[variant];
     const committedAt = new Date().toISOString();
     const refundBy = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();

@@ -11,6 +11,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === 'sk_test_placeholder') {
+    return NextResponse.json(
+      { processed: 0, refunded: 0, failed: 0, disabled: 'Stripe is not configured' },
+      { status: 503 }
+    );
+  }
+
   const db = getDb();
   const stripe = getStripe();
   const now = new Date().toISOString();
