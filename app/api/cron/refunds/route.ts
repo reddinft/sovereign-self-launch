@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { ensureDb } from '@/lib/db';
 import { getStripe } from '@/lib/stripe';
 
 export async function GET(req: NextRequest) {
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const db = getDb();
+  const db = await ensureDb();
   const stripe = getStripe();
   const now = new Date().toISOString();
 

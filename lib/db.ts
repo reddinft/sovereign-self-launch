@@ -15,6 +15,16 @@ export function getDb() {
   return _client;
 }
 
+let _initPromise: Promise<void> | null = null;
+
+export async function ensureDb() {
+  if (!_initPromise) {
+    _initPromise = initDb();
+  }
+  await _initPromise;
+  return getDb();
+}
+
 export async function initDb() {
   const db = getDb();
   await db.execute(`

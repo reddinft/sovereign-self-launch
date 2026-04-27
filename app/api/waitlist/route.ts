@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { ensureDb } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     }
 
     const normalizedEmail = email.toLowerCase().trim();
-    const db = getDb();
+    const db = await ensureDb();
 
     await db.execute({
       sql: `INSERT INTO waitlist (email, signed_up_at, source)
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const db = getDb();
+    const db = await ensureDb();
     const result = await db.execute('SELECT COUNT(*) as count FROM waitlist');
     return NextResponse.json({ count: Number(result.rows[0].count) });
   } catch {

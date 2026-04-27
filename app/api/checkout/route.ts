@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe, VARIANT_PRICE_IDS, VARIANT_AMOUNTS_CENTS } from '@/lib/stripe';
-import { getDb } from '@/lib/db';
+import { ensureDb } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
   if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === 'sk_test_placeholder') {
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
 
     // Pre-store commitment — will be updated on webhook success
     try {
-      const db = getDb();
+      const db = await ensureDb();
       await db.execute({
         sql: `INSERT INTO early_commitments 
               (email, stripe_session_id, variant, amount_cents, committed_at, refund_by, status)
