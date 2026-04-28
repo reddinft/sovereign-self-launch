@@ -2,6 +2,11 @@ import { PostHog } from 'posthog-node';
 
 let _posthog: PostHog | null = null;
 
+export function isPostHogConfigured() {
+  const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+  return Boolean(key && key.trim() && key !== 'phc_placeholder');
+}
+
 export function getPostHogServer(): PostHog {
   if (!_posthog) {
     _posthog = new PostHog(
@@ -20,6 +25,9 @@ export type PricingVariant = 'variant-a' | 'variant-b' | 'variant-c';
 
 export async function getPricingVariant(distinctId: string): Promise<PricingVariant> {
   try {
+    if (!isPostHogConfigured()) {
+      return 'variant-c';
+    }
     const posthog = getPostHogServer();
     const flag = await posthog.getFeatureFlag('pricing-variant', distinctId);
     if (flag === 'variant-a' || flag === 'variant-b' || flag === 'variant-c') {

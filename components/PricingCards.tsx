@@ -11,7 +11,7 @@ interface PricingCardsProps {
   initialVariant: Variant;
 }
 
-const PLANS = [
+const BASE_PLANS = [
   {
     id: 'c',
     variantKey: 'variant-c',
@@ -53,14 +53,31 @@ const PLANS = [
   },
 ] as const;
 
+const VARIANT_TO_PLAN_ID: Record<Variant, 'a' | 'b' | 'c'> = {
+  'variant-a': 'a',
+  'variant-b': 'b',
+  'variant-c': 'c',
+};
+
 export function PricingCards({ initialVariant }: PricingCardsProps) {
   const [email, setEmail] = useState('');
   const [loadingVariant, setLoadingVariant] = useState<string | null>(null);
   const [error, setError] = useState('');
 
+  const highlightedPlanId = VARIANT_TO_PLAN_ID[initialVariant] || 'c';
+  const plans = BASE_PLANS.map((plan) => ({
+    ...plan,
+    highlight: plan.id === highlightedPlanId,
+    badge: plan.id === highlightedPlanId ? 'Recommended' : plan.badge,
+  })).sort((left, right) => {
+    if (left.id === highlightedPlanId) return -1;
+    if (right.id === highlightedPlanId) return 1;
+    return 0;
+  });
+
   useEffect(() => {
-    posthog.capture('pricing_variant_seen', { variant: initialVariant });
-  }, [initialVariant]);
+    posthog.capture('pricing_variant_seen', { variant: initialVariant, highlighted_plan: highlightedPlanId });
+  }, [initialVariant, highlightedPlanId]);
 
   const hashEmail = async (value: string) => {
     const data = new TextEncoder().encode(value.toLowerCase().trim());
@@ -97,7 +114,7 @@ export function PricingCards({ initialVariant }: PricingCardsProps) {
     setLoadingVariant(planId);
     posthog.capture('checkout_started', {
       variant: planId,
-      price: PLANS.find((p) => p.id === planId)?.price,
+      price: BASE_PLANS.find((p) => p.id === planId)?.price,
     });
     try {
       const res = await fetch('/api/checkout', {
@@ -153,9 +170,9 @@ export function PricingCards({ initialVariant }: PricingCardsProps) {
         </p>
       )}
 
-      {/* Cards — C first (anchor), then B, then A */}
+      {/* Cards — winning/assigned variant first, then remaining offers */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {PLANS.map((plan, i) => (
+        {plans.map((plan, i) => (
           <motion.div
             key={plan.id}
             initial={{ opacity: 0, y: 20 }}

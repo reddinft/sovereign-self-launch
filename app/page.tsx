@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';
-import { getPostHogServer } from '@/lib/posthog';
+import { getPostHogServer, getPricingVariant, isPostHogConfigured } from '@/lib/posthog';
 import { HeroSection } from '@/components/HeroSection';
 import { ProblemSection } from '@/components/ProblemSection';
 import { FeaturesSection } from '@/components/FeaturesSection';
@@ -21,14 +21,17 @@ async function getDistinctId(): Promise<string> {
 export default async function HomePage() {
   const distinctId = await getDistinctId();
 
+  const pricingVariant = await getPricingVariant(distinctId);
+
   try {
-    const posthog = getPostHogServer();
-    posthog.capture({
-      distinctId,
-      event: 'page_view',
-      properties: { page: 'landing' },
-    });
-    await posthog.shutdown();
+    if (isPostHogConfigured()) {
+      const posthog = getPostHogServer();
+      posthog.capture({
+        distinctId,
+        event: 'page_view',
+        properties: { page: 'landing', pricing_variant: pricingVariant },
+      });
+    }
   } catch {
     // PostHog not configured — skip
   }
@@ -39,7 +42,7 @@ export default async function HomePage() {
       <HeroSection />
       <ProblemSection />
       <FeaturesSection />
-      <PricingSection />
+      <PricingSection initialVariant={pricingVariant} />
       <HowItWorksSection />
       <FaqSection />
       <FooterCTASection />

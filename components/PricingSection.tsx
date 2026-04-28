@@ -4,7 +4,13 @@ import { PricingCards } from '@/components/PricingCards';
 import { WaitlistForm } from '@/components/WaitlistForm';
 import { motion } from 'framer-motion';
 
-export function PricingSection() {
+type PricingVariant = 'variant-a' | 'variant-b' | 'variant-c';
+
+interface PricingSectionProps {
+  initialVariant: PricingVariant;
+}
+
+export function PricingSection({ initialVariant }: PricingSectionProps) {
   return (
     <section id="pricing" className="py-24">
       <div className="container mx-auto px-4">
@@ -38,7 +44,7 @@ export function PricingSection() {
           </p>
         </motion.div>
 
-        <PricingCards initialVariant="variant-c" />
+        <PricingCards initialVariant={initialVariant} />
 
         {/* Embedded waitlist CTA */}
         <motion.div
