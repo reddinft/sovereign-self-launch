@@ -62,6 +62,32 @@ export function PricingCards({ initialVariant }: PricingCardsProps) {
     posthog.capture('pricing_variant_seen', { variant: initialVariant });
   }, [initialVariant]);
 
+  const hashEmail = async (value: string) => {
+    const data = new TextEncoder().encode(value.toLowerCase().trim());
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(digest))
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('')
+      .slice(0, 16);
+  };
+
+  const joinWaitlistForPlan = async (planId: string) => {
+    const res = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source: `pricing-${planId}` }),
+    });
+    const waitlistData = await res.json();
+    if (!waitlistData.success) {
+      throw new Error(waitlistData.error || 'Failed to join waitlist.');
+    }
+    posthog.capture('pricing_waitlist_fallback', {
+      variant: planId,
+      email_hash: await hashEmail(email),
+    });
+    window.location.href = '/waitlist-confirmed';
+  };
+
   const handleCheckout = async (planId: string, variantKey: Variant) => {
     setError('');
     if (!email || !email.includes('@')) {
@@ -82,6 +108,8 @@ export function PricingCards({ initialVariant }: PricingCardsProps) {
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+      } else if (data.fallback === 'waitlist') {
+        await joinWaitlistForPlan(planId);
       } else {
         setError(data.error || 'Failed to start checkout. Try again.');
         setLoadingVariant(null);

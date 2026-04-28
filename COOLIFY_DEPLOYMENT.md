@@ -21,6 +21,7 @@ NEXT_PUBLIC_BASE_URL=https://sovereign-self.preview.reddi.tech
 TURSO_DATABASE_URL=...
 TURSO_AUTH_TOKEN=...
 CRON_SECRET=...
+ADMIN_API_TOKEN=...
 ```
 
 Payments remain safely disabled until all Stripe values are real:
@@ -77,9 +78,10 @@ python3 /Users/loki/.openclaw/workspace/scripts/coolify_bootstrap_app.py \
 
 1. `GET /api/health` returns `{ "status": "ok" }`.
 2. Landing page returns 200.
-3. `POST /api/waitlist` with a test email returns success and increments count.
-4. With Stripe placeholders, `POST /api/checkout` returns 503, not 500.
-5. With real Stripe price IDs, checkout returns a Stripe Checkout URL.
+3. Protected waitlist export rejects missing auth with 401.
+4. `POST /api/waitlist` with a test email returns success and increments count.
+5. With Stripe placeholders, pricing CTAs fall back to waitlist capture and direct API checkout returns 503, not 500.
+6. With real Stripe price IDs, checkout returns a Stripe Checkout URL.
 6. Stripe webhook endpoint rejects unsigned requests with 400 and accepts valid Stripe signed `checkout.session.completed` events.
 7. Cron endpoint returns 401 without bearer token and 200/503 with the correct token depending Stripe readiness.
 

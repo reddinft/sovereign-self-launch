@@ -32,6 +32,15 @@ export function WaitlistForm({
       .catch(() => {});
   }, []);
 
+  const hashEmail = async (value: string) => {
+    const data = new TextEncoder().encode(value.toLowerCase().trim());
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(digest))
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('')
+      .slice(0, 16);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -48,7 +57,7 @@ export function WaitlistForm({
       });
       const data = await res.json();
       if (data.success) {
-        posthog.capture('waitlist_signup', { email_hash: btoa(email).slice(0, 8) });
+        posthog.capture('waitlist_signup', { email_hash: await hashEmail(email) });
         router.push('/waitlist-confirmed');
       } else {
         setError(data.error || 'Something went wrong. Try again.');

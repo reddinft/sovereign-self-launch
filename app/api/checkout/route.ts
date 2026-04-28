@@ -5,7 +5,7 @@ import { ensureDb } from '@/lib/db';
 export async function POST(req: NextRequest) {
   if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === 'sk_test_placeholder') {
     return NextResponse.json(
-      { error: 'Early access payments opening soon. Join the waitlist to be notified.' },
+      { error: 'Early access payments opening soon. Join the waitlist to be notified.', fallback: 'waitlist' },
       { status: 503 }
     );
   }
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const priceId = VARIANT_PRICE_IDS[variant];
     if (!priceId || priceId.startsWith('price_placeholder')) {
       return NextResponse.json(
-        { error: 'Early access payments opening soon. Join the waitlist to be notified.' },
+        { error: 'Early access payments opening soon. Join the waitlist to be notified.', fallback: 'waitlist' },
         { status: 503 }
       );
     }

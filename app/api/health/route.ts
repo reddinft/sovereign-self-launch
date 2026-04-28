@@ -14,6 +14,7 @@ export async function GET() {
       posthog: isConfigured(process.env.NEXT_PUBLIC_POSTHOG_KEY, 'phc_placeholder'),
       resend: Boolean(process.env.RESEND_API_KEY),
       cronSecret: Boolean(process.env.CRON_SECRET),
+      adminApi: Boolean(process.env.ADMIN_API_TOKEN),
     },
   });
 }
