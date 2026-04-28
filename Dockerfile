@@ -20,7 +20,9 @@ ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
 RUN addgroup --system --gid 1001 nodejs \
-  && adduser --system --uid 1001 nextjs
+  && adduser --system --uid 1001 nextjs \
+  && mkdir -p /data \
+  && chown nextjs:nodejs /data
 
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
