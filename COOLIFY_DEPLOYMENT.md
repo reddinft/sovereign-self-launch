@@ -30,6 +30,7 @@ STRIPE_SECRET_KEY=sk_live_or_test_...
 STRIPE_VARIANT_A_PRICE_ID=price_...
 STRIPE_VARIANT_B_PRICE_ID=price_...
 STRIPE_VARIANT_C_PRICE_ID=price_...
+STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
 Optional but recommended before active campaign:
@@ -79,11 +80,13 @@ python3 /Users/loki/.openclaw/workspace/scripts/coolify_bootstrap_app.py \
 3. `POST /api/waitlist` with a test email returns success and increments count.
 4. With Stripe placeholders, `POST /api/checkout` returns 503, not 500.
 5. With real Stripe price IDs, checkout returns a Stripe Checkout URL.
-6. Cron endpoint returns 401 without bearer token and 200 with the correct token.
+6. Stripe webhook endpoint rejects unsigned requests with 400 and accepts valid Stripe signed `checkout.session.completed` events.
+7. Cron endpoint returns 401 without bearer token and 200/503 with the correct token depending Stripe readiness.
 
 ## Current gaps
 
 - Need Coolify app UUID/deploy status after bootstrap.
 - Need Nissan-created Stripe products/price IDs before payment CTAs go live.
 - Need PostHog feature flag `pricing-variant` before valid A/B readout.
+- Need Stripe webhook configured to `POST /api/stripe/webhook` when payments go live.
 - Need final domain decision and DNS cutover after preview smoke test.

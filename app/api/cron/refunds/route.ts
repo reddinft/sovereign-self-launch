@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
   // Find all pending commitments past their refund deadline
   const result = await db.execute({
     sql: `SELECT * FROM early_commitments 
-          WHERE status = 'pending' AND refund_by < ?`,
+          WHERE status = 'paid' AND refund_by < ?`,
     args: [now],
   });
 
@@ -35,11 +35,13 @@ export async function GET(req: NextRequest) {
   for (const row of result.rows) {
     const sessionId = String(row.stripe_session_id);
     try {
-      // Get the payment intent from the Stripe session
-      const session = await stripe.checkout.sessions.retrieve(sessionId);
-      if (session.payment_intent) {
+      const paymentIntentId = row.stripe_payment_intent_id
+        ? String(row.stripe_payment_intent_id)
+        : String((await stripe.checkout.sessions.retrieve(sessionId)).payment_intent || '');
+
+      if (paymentIntentId) {
         await stripe.refunds.create({
-          payment_intent: String(session.payment_intent),
+          payment_intent: paymentIntentId,
         });
         await db.execute({
           sql: `UPDATE early_commitments 

@@ -50,6 +50,15 @@ export async function POST(req: NextRequest) {
         variant,
         email,
         committed_at: committedAt,
+        refund_by: refundBy,
+      },
+      payment_intent_data: {
+        metadata: {
+          variant,
+          email,
+          committed_at: committedAt,
+          refund_by: refundBy,
+        },
       },
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/#pricing`,

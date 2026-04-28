@@ -25,6 +25,17 @@ export async function ensureDb() {
   return getDb();
 }
 
+async function addColumnIfMissing(db: ReturnType<typeof getDb>, table: string, definition: string) {
+  try {
+    await db.execute(`ALTER TABLE ${table} ADD COLUMN ${definition}`);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!message.toLowerCase().includes('duplicate column')) {
+      throw error;
+    }
+  }
+}
+
 export async function initDb() {
   const db = getDb();
   await db.execute(`
@@ -48,4 +59,8 @@ export async function initDb() {
       status TEXT DEFAULT 'pending'
     )
   `);
+
+  await addColumnIfMissing(db, 'early_commitments', 'stripe_payment_intent_id TEXT');
+  await addColumnIfMissing(db, 'early_commitments', 'stripe_customer_id TEXT');
+  await addColumnIfMissing(db, 'early_commitments', 'paid_at TEXT');
 }
